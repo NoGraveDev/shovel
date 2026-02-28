@@ -102,6 +102,44 @@
         </div>
     </section>
 
+    <!-- Live Demo Section -->
+    <section class="py-20 px-6 lg:px-8 bg-gradient-to-b from-card-bg to-dark-bg">
+        <div class="max-w-4xl mx-auto text-center fade-in">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                Test your project's <span class="text-gold">Ship Score</span>
+            </h2>
+            <p class="text-xl text-gray-300 mb-12">
+                Paste any GitHub repo and see how ready it is for production in seconds
+            </p>
+            
+            <!-- Repo Scanner -->
+            <div class="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mb-8">
+                <input 
+                    type="url" 
+                    id="repo-url" 
+                    placeholder="https://github.com/username/repo"
+                    class="flex-1 px-4 py-3 bg-dark-bg border border-border-color rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold"
+                >
+                <button 
+                    onclick="scanRepo()"
+                    class="gradient-gold text-black px-8 py-3 rounded-lg font-semibold hover-lift hover:shadow-lg transition-all whitespace-nowrap"
+                >
+                    Scan Repository
+                </button>
+            </div>
+            
+            <div id="scan-result" class="mt-8">
+                <!-- Results will appear here -->
+            </div>
+            
+            <p class="text-sm text-gray-500 mt-8">
+                Try it with popular repos: 
+                <button onclick="document.getElementById('repo-url').value='https://github.com/shadcn-ui/taxonomy'; scanRepo();" class="text-gold hover:underline">shadcn-ui/taxonomy</button> • 
+                <button onclick="document.getElementById('repo-url').value='https://github.com/timlrx/tailwind-nextjs-starter-blog'; scanRepo();" class="text-gold hover:underline">nextjs-starter-blog</button>
+            </p>
+        </div>
+    </section>
+
     <!-- The Problem Section -->
     <section class="py-20 px-6 lg:px-8">
         <div class="max-w-6xl mx-auto">
@@ -404,44 +442,222 @@
     </footer>
 
     <script>
-        function joinWaitlist() {
+        const API_BASE = window.location.protocol + '//' + window.location.host;
+
+        async function joinWaitlist() {
             const email = document.getElementById('waitlist-email').value;
-            if (email && validateEmail(email)) {
-                // Save to localStorage for now
-                let waitlist = JSON.parse(localStorage.getItem('shovel-waitlist') || '[]');
-                if (!waitlist.includes(email)) {
-                    waitlist.push(email);
-                    localStorage.setItem('shovel-waitlist', JSON.stringify(waitlist));
+            const button = event.target;
+            
+            if (!email || !validateEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Disable button during request
+            button.disabled = true;
+            button.textContent = 'Adding...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/waitlist`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
                     alert('🎉 Welcome to the waitlist! We\'ll notify you when Shovel is ready to ship.');
                     document.getElementById('waitlist-email').value = '';
                 } else {
-                    alert('You\'re already on the waitlist!');
+                    alert(result.error || 'Failed to join waitlist. Please try again.');
                 }
-            } else {
-                alert('Please enter a valid email address.');
+            } catch (error) {
+                console.error('Waitlist error:', error);
+                alert('Network error. Please check your connection and try again.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Dig In';
             }
         }
 
-        function joinWaitlistFooter() {
+        async function joinWaitlistFooter() {
             const email = document.getElementById('footer-email').value;
-            if (email && validateEmail(email)) {
-                let waitlist = JSON.parse(localStorage.getItem('shovel-waitlist') || '[]');
-                if (!waitlist.includes(email)) {
-                    waitlist.push(email);
-                    localStorage.setItem('shovel-waitlist', JSON.stringify(waitlist));
+            const button = event.target;
+            
+            if (!email || !validateEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Adding...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/waitlist`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
                     alert('🎉 Welcome to the waitlist! We\'ll notify you when Shovel is ready to ship.');
                     document.getElementById('footer-email').value = '';
                 } else {
-                    alert('You\'re already on the waitlist!');
+                    alert(result.error || 'Failed to join waitlist. Please try again.');
                 }
-            } else {
-                alert('Please enter a valid email address.');
+            } catch (error) {
+                console.error('Waitlist error:', error);
+                alert('Network error. Please check your connection and try again.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Join Waitlist';
             }
+        }
+
+        async function scanRepo() {
+            const repoUrl = document.getElementById('repo-url').value;
+            const button = event.target;
+            const resultContainer = document.getElementById('scan-result');
+            
+            if (!repoUrl || !isValidGitHubUrl(repoUrl)) {
+                alert('Please enter a valid GitHub repository URL (e.g., https://github.com/user/repo)');
+                return;
+            }
+
+            // Show loading state
+            button.disabled = true;
+            button.textContent = 'Scanning...';
+            resultContainer.innerHTML = `
+                <div class="bg-card-bg border border-border-color rounded-xl p-6 text-center">
+                    <div class="animate-spin w-8 h-8 border-2 border-gold border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="text-gray-300">Analyzing repository... This may take up to 60 seconds.</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/scan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ repoUrl })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    displayScanResult(result.data);
+                } else {
+                    resultContainer.innerHTML = `
+                        <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6">
+                            <h3 class="text-red-400 text-lg font-semibold mb-2">Scan Failed</h3>
+                            <p class="text-red-300">${result.error}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Scan error:', error);
+                resultContainer.innerHTML = `
+                    <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6">
+                        <h3 class="text-red-400 text-lg font-semibold mb-2">Network Error</h3>
+                        <p class="text-red-300">Unable to connect to the scanner. Please check your connection and try again.</p>
+                    </div>
+                `;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Scan Repository';
+            }
+        }
+
+        function displayScanResult(data) {
+            const resultContainer = document.getElementById('scan-result');
+            
+            const getScoreColor = (score) => {
+                if (score >= 80) return 'text-green-400';
+                if (score >= 60) return 'text-yellow-400';
+                return 'text-red-400';
+            };
+
+            const getStatusColor = (status) => {
+                switch (status) {
+                    case 'pass': return 'text-green-400 bg-green-400/10';
+                    case 'warning': return 'text-yellow-400 bg-yellow-400/10';
+                    case 'critical': return 'text-red-400 bg-red-400/10';
+                    default: return 'text-gray-400 bg-gray-400/10';
+                }
+            };
+
+            const categoriesHtml = data.categories.map(category => `
+                <div class="bg-card-bg border border-border-color rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-semibold">${category.name}</h4>
+                        <span class="${getScoreColor(category.score)} font-bold">${category.score}/100</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 rounded text-xs font-medium ${getStatusColor(category.status)}">
+                            ${category.status.toUpperCase()}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-2">${category.suggestion}</p>
+                    ${category.findings.length > 0 ? `
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-gray-500">View findings</summary>
+                            <ul class="mt-2 space-y-1">
+                                ${category.findings.map(finding => `<li class="text-gray-400">• ${finding}</li>`).join('')}
+                            </ul>
+                        </details>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            resultContainer.innerHTML = `
+                <div class="bg-card-bg border border-border-color rounded-xl p-6">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold mb-2">Ship Score</h3>
+                        <div class="text-6xl font-bold ${getScoreColor(data.shipScore)} mb-2">${data.shipScore}/100</div>
+                        <p class="text-gray-400">Scanned in ${data.scanDuration}ms</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold mb-3">Detected Technologies</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${data.stackDetection.technologies.map(tech => 
+                                `<span class="px-3 py-1 bg-gold/10 border border-gold/20 rounded-full text-sm">${tech}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4">Category Breakdown</h4>
+                        <div class="grid gap-4">
+                            ${categoriesHtml}
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <a href="/app" class="inline-block gradient-gold text-black px-6 py-3 rounded-lg font-semibold hover-lift">
+                            View Full Dashboard →
+                        </a>
+                    </div>
+                </div>
+            `;
         }
 
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
+        }
+
+        function isValidGitHubUrl(url) {
+            const githubRegex = /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+\/?$/;
+            return githubRegex.test(url);
         }
 
         // Simple fade-in animation on scroll

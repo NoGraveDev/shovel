@@ -132,118 +132,8 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-auto p-6">
                 <!-- Projects Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <!-- Active Project Card -->
-                    <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
-                        <div class="flex items-start justify-between mb-4">
-                            <div>
-                                <h3 class="text-xl font-semibold mb-1">my-saas-app</h3>
-                                <div class="flex items-center text-sm text-gray-400">
-                                    <div class="w-2 h-2 bg-orange-400 rounded-full mr-2 loading-pulse"></div>
-                                    Scanning...
-                                </div>
-                            </div>
-                            <button class="p-1 hover:bg-gray-700 rounded">
-                                <span class="text-gray-400">⋯</span>
-                            </button>
-                        </div>
-                        
-                        <!-- Ship Score -->
-                        <div class="mb-6">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-medium">Ship Score</span>
-                                <span class="text-2xl font-bold text-orange-400">67<span class="text-sm text-gray-400">/100</span></span>
-                            </div>
-                            <div class="w-full bg-gray-700 rounded-full h-3">
-                                <div class="ship-score-bar h-3 rounded-full" style="width: 67%; background: linear-gradient(90deg, #dc2626 0%, #f59e0b 67%, #16a34a 100%); clip-path: inset(0 33% 0 0);"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Issues Summary -->
-                        <div class="mb-6">
-                            <h4 class="text-sm font-medium mb-3">Issues Found</h4>
-                            <div class="flex space-x-4 text-sm">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                                    <span>1 Critical</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
-                                    <span>3 Warnings</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Actions -->
-                        <div class="space-y-2">
-                            <button 
-                                disabled 
-                                class="w-full py-2 bg-gray-600 text-gray-400 rounded-lg font-medium cursor-not-allowed"
-                            >
-                                🚀 Ship Now (80+ score required)
-                            </button>
-                            <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Completed Project Card -->
-                    <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
-                        <div class="flex items-start justify-between mb-4">
-                            <div>
-                                <h3 class="text-xl font-semibold mb-1">portfolio-site</h3>
-                                <div class="flex items-center text-sm text-green-400">
-                                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                                    Deployed
-                                </div>
-                            </div>
-                            <button class="p-1 hover:bg-gray-700 rounded">
-                                <span class="text-gray-400">⋯</span>
-                            </button>
-                        </div>
-                        
-                        <!-- Ship Score -->
-                        <div class="mb-6">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-medium">Ship Score</span>
-                                <span class="text-2xl font-bold text-green-400">95<span class="text-sm text-gray-400">/100</span></span>
-                            </div>
-                            <div class="w-full bg-gray-700 rounded-full h-3">
-                                <div class="bg-green-400 h-3 rounded-full" style="width: 95%"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Deployment Info -->
-                        <div class="mb-6">
-                            <h4 class="text-sm font-medium mb-3">Live Site</h4>
-                            <a href="#" class="text-sm text-gold hover:underline">portfolio-site.shovelapp.com ↗</a>
-                        </div>
-                        
-                        <!-- Actions -->
-                        <div class="space-y-2">
-                            <button class="w-full py-2 gradient-gold text-black rounded-lg font-medium hover-lift">
-                                🔄 Redeploy
-                            </button>
-                            <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
-                                View Analytics
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- New Project Card -->
-                    <div class="bg-card-bg border-2 border-dashed border-border-color rounded-xl p-6 hover:border-gold/50 transition-colors cursor-pointer">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-gold/10 border border-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span class="text-3xl">➕</span>
-                            </div>
-                            <h3 class="text-xl font-semibold mb-2">New Project</h3>
-                            <p class="text-gray-400 text-sm mb-6">Connect your repository or upload your AI-built project</p>
-                            <button class="gradient-gold text-black px-6 py-2 rounded-lg font-medium hover-lift">
-                                Get Started
-                            </button>
-                        </div>
-                    </div>
+                <div id="projects-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Projects will be loaded dynamically -->
                 </div>
             </main>
         </div>
@@ -420,8 +310,15 @@
     </div>
     
     <script>
+        const API_BASE = window.location.protocol + '//' + window.location.host;
+        let currentScanData = null;
+
         // Modal functionality
-        function showModal() {
+        function showModal(scanData = null) {
+            if (scanData) {
+                currentScanData = scanData;
+                populateModal(scanData);
+            }
             document.getElementById('project-modal').classList.remove('hidden');
             document.getElementById('project-modal').classList.add('flex');
         }
@@ -430,12 +327,181 @@
             document.getElementById('project-modal').classList.add('hidden');
             document.getElementById('project-modal').classList.remove('flex');
         }
-        
-        // Add click handler to "View Details" button
+
+        function populateModal(data) {
+            // This function would populate the modal with real data
+            // For now, we'll keep the modal structure as is since it's complex
+        }
+
+        async function loadRecentScans() {
+            try {
+                const response = await fetch(`${API_BASE}/api/scans/recent?limit=10`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayProjects(result.data);
+                } else {
+                    showEmptyState('Failed to load scans');
+                }
+            } catch (error) {
+                console.error('Error loading scans:', error);
+                showEmptyState('Network error loading scans');
+            }
+        }
+
+        function displayProjects(scans) {
+            const container = document.getElementById('projects-container');
+            
+            if (scans.length === 0) {
+                showEmptyState('No scans yet');
+                return;
+            }
+
+            const projectsHtml = scans.map(scan => {
+                const getScoreColor = (score) => {
+                    if (score >= 80) return 'text-green-400';
+                    if (score >= 60) return 'text-yellow-400';
+                    return 'text-orange-400';
+                };
+
+                const getScoreBarColor = (score) => {
+                    if (score >= 80) return 'bg-green-400';
+                    if (score >= 60) return 'bg-yellow-400';
+                    return 'bg-orange-400';
+                };
+
+                const getStatus = (score) => {
+                    if (score >= 80) return { text: 'Ready to Ship', color: 'text-green-400', dot: 'bg-green-400' };
+                    return { text: 'Needs Work', color: 'text-orange-400', dot: 'bg-orange-400' };
+                };
+
+                const status = getStatus(scan.shipScore);
+                const repoName = scan.repoUrl.split('/').pop() || 'Unknown';
+                const createdAt = new Date(scan.createdAt).toLocaleDateString();
+
+                return `
+                    <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-1">${repoName}</h3>
+                                <div class="flex items-center text-sm ${status.color}">
+                                    <div class="w-2 h-2 ${status.dot} rounded-full mr-2"></div>
+                                    ${status.text}
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Scanned ${createdAt}</div>
+                            </div>
+                            <button class="p-1 hover:bg-gray-700 rounded">
+                                <span class="text-gray-400">⋯</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Ship Score -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Ship Score</span>
+                                <span class="text-2xl font-bold ${getScoreColor(scan.shipScore)}">${scan.shipScore}<span class="text-sm text-gray-400">/100</span></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="${getScoreBarColor(scan.shipScore)} h-3 rounded-full transition-all" style="width: ${scan.shipScore}%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Stats -->
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 mb-2">Scan took ${scan.scanDuration}ms</div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="space-y-2">
+                            ${scan.shipScore >= 80 ? `
+                                <button class="w-full py-2 gradient-gold text-black rounded-lg font-medium hover-lift">
+                                    🚀 Ready to Ship
+                                </button>
+                            ` : `
+                                <button 
+                                    disabled 
+                                    class="w-full py-2 bg-gray-600 text-gray-400 rounded-lg font-medium cursor-not-allowed"
+                                >
+                                    🚀 Ship Now (80+ score required)
+                                </button>
+                            `}
+                            <button 
+                                onclick="viewScanDetails('${scan.id}')"
+                                class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors"
+                            >
+                                View Details
+                            </button>
+                            <a 
+                                href="${scan.repoUrl}" 
+                                target="_blank"
+                                class="block w-full py-2 text-center border border-border-color rounded-lg hover:border-gold transition-colors text-sm"
+                            >
+                                View Repository
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = projectsHtml;
+        }
+
+        function showEmptyState(message = 'No projects yet') {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-12">
+                    <div class="text-6xl mb-4">🪓</div>
+                    <h3 class="text-xl font-semibold mb-2">${message}</h3>
+                    <p class="text-gray-400 text-center mb-6">
+                        Start by scanning a GitHub repository to see its Ship Score.
+                    </p>
+                    <button onclick="startNewScan()" class="gradient-gold text-black px-6 py-3 rounded-lg font-semibold hover-lift">
+                        Scan Repository
+                    </button>
+                </div>
+            `;
+        }
+
+        function startNewScan() {
+            const repoUrl = prompt('Enter GitHub repository URL:', 'https://github.com/username/repo');
+            if (repoUrl && isValidGitHubUrl(repoUrl)) {
+                window.location.href = `/?scan=${encodeURIComponent(repoUrl)}`;
+            } else if (repoUrl) {
+                alert('Please enter a valid GitHub URL');
+            }
+        }
+
+        async function viewScanDetails(scanId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/scan/${scanId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    // For now, just show an alert with basic info
+                    // In the future, we could populate the detailed modal
+                    alert(`Scan Details:\\nScore: ${result.data.shipScore}/100\\nRepo: ${result.data.repoUrl}\\nTechnologies: ${result.data.stackDetection.technologies.join(', ')}`);
+                } else {
+                    alert('Failed to load scan details');
+                }
+            } catch (error) {
+                console.error('Error loading scan details:', error);
+                alert('Error loading scan details');
+            }
+        }
+
+        function isValidGitHubUrl(url) {
+            const githubRegex = /^https:\\/\\/github\\.com\\/[a-zA-Z0-9_.-]+\\/[a-zA-Z0-9_.-]+\\/?$/;
+            return githubRegex.test(url);
+        }
+
+        // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            const viewDetailsBtn = document.querySelector('button:contains("View Details")');
-            if (viewDetailsBtn) {
-                viewDetailsBtn.onclick = showModal;
+            loadRecentScans();
+            
+            // Add New Project button handler
+            const newProjectBtn = document.querySelector('.gradient-gold');
+            if (newProjectBtn) {
+                newProjectBtn.onclick = startNewScan;
             }
         });
     </script>
