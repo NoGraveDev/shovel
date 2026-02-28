@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shovel: Ship What AI Builds</title>
+    <meta name="description" content="Built with AI. Shipped with Shovel. Deploy your AI-built apps in 60 seconds.">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://shovel-app.netlify.app/">
+    <meta property="og:title" content="Shovel: Ship What AI Builds">
+    <meta property="og:description" content="You built something amazing with AI. Now ship it to the world in 60 seconds.">
+    <meta property="og:image" content="https://shovel-app.netlify.app/og-image.png">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://shovel-app.netlify.app/">
+    <meta property="twitter:title" content="Shovel: Ship What AI Builds">
+    <meta property="twitter:description" content="You built something amazing with AI. Now ship it to the world in 60 seconds.">
+    <meta property="twitter:image" content="https://shovel-app.netlify.app/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪓</text></svg>">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0a0a0a',
+                        'card-bg': '#141414',
+                        'border-color': '#222',
+                        'gold': '#D4A017',
+                        'gold-light': '#F5A623'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .gradient-gold {
+            background: linear-gradient(135deg, #F5A623 0%, #D4A017 100%);
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hover-lift {
+            transition: transform 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-white font-inter">
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center fade-in">
+            <div class="mb-8">
+                <span class="text-6xl">🪓</span>
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+                Built with AI.<br>
+                <span class="text-gold">Shipped with Shovel.</span>
+            </h1>
+            <p class="text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed max-w-3xl mx-auto">
+                You built something amazing with AI. Now ship it to the world in 60 seconds.
+            </p>
+            
+            <!-- Waitlist Signup -->
+            <div class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto mb-8">
+                <input 
+                    type="email" 
+                    id="waitlist-email" 
+                    placeholder="Enter your email"
+                    class="flex-1 px-4 py-3 bg-card-bg border border-border-color rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold"
+                >
+                <button 
+                    onclick="joinWaitlist()"
+                    class="gradient-gold text-black px-8 py-3 rounded-lg font-semibold hover-lift hover:shadow-lg transition-all"
+                >
+                    Dig In
+                </button>
+            </div>
+            <p class="text-sm text-gray-500 mb-16">Join 1,000+ builders waiting to ship their AI creations</p>
+        </div>
+    </section>
+
+    <!-- The Problem Section -->
+    <section class="py-20 px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    AI made building easy.<br>
+                    <span class="text-gold">Nobody made shipping easy.</span>
+                </h2>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                    You've got the app. You've got the vision. But between you and going live lies the deployment wall that crushes dreams.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-card-bg border border-border-color rounded-xl p-8 hover-lift">
+                    <div class="text-4xl mb-4">🌐</div>
+                    <h3 class="text-xl font-semibold mb-4 text-gold">DNS? SSL? Env vars?</h3>
+                    <p class="text-gray-300">Configure domains, certificates, environment variables, and deployment settings. It's not coding anymore—it's DevOps.</p>
+                </div>
+                
+                <div class="bg-card-bg border border-border-color rounded-xl p-8 hover-lift">
+                    <div class="text-4xl mb-4">💳</div>
+                    <h3 class="text-xl font-semibold mb-4 text-gold">Auth & Payments from scratch?</h3>
+                    <p class="text-gray-300">Your AI built the features, but now you need user authentication, payment processing, and database setup. From zero.</p>
+                </div>
+                
+                <div class="bg-card-bg border border-border-color rounded-xl p-8 hover-lift">
+                    <div class="text-4xl mb-4">🔒</div>
+                    <h3 class="text-xl font-semibold mb-4 text-gold">Is it even secure?</h3>
+                    <p class="text-gray-300">Security best practices, HTTPS configuration, data protection. One wrong move and your users' data is at risk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 px-6 lg:px-8 bg-gradient-to-b from-dark-bg to-card-bg">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">Ship in <span class="text-gold">3 steps</span></h2>
+                <p class="text-xl text-gray-300">From AI code to live app in 60 seconds</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="text-center">
+                    <div class="bg-gold/10 border border-gold/20 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🔗</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4 text-gold">1. Connect</h3>
+                    <p class="text-gray-300">Link your GitHub repo or drag & drop your AI-built project. We support all major AI coding tools.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-gold/10 border border-gold/20 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🔍</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4 text-gold">2. Scan</h3>
+                    <p class="text-gray-300">Our Ship Score™ analyzes your project and tells you exactly what's missing to go live.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-gold/10 border border-gold/20 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🚀</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4 text-gold">3. Ship</h3>
+                    <p class="text-gray-300">One click deploys your app with auth, payments, database, and security configured automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ship Score Section -->
+    <section class="py-20 px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">Introducing <span class="text-gold">Ship Score™</span></h2>
+                <p class="text-xl text-gray-300">Know exactly what's needed to go from code to customers</p>
+            </div>
+            
+            <div class="bg-card-bg border border-border-color rounded-2xl p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-2xl font-semibold">my-saas-app</h3>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-gold">45<span class="text-lg text-gray-400">/100</span></div>
+                        <div class="text-sm text-gray-400">Ship Score</div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-green-900/20 border border-green-500/20 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="text-green-400 mr-3">✅</span>
+                            <span>Frontend detected (React + Vite)</span>
+                        </div>
+                        <span class="text-green-400 text-sm">+25 points</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-yellow-900/20 border border-yellow-500/20 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="text-yellow-400 mr-3">⚠️</span>
+                            <span>No authentication system</span>
+                        </div>
+                        <button class="gradient-gold text-black px-4 py-2 rounded text-sm font-medium hover-lift">
+                            Fix (+20 pts)
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-red-900/20 border border-red-500/20 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="text-red-400 mr-3">❌</span>
+                            <span>No database configured</span>
+                        </div>
+                        <button class="gradient-gold text-black px-4 py-2 rounded text-sm font-medium hover-lift">
+                            Fix (+35 pts)
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-border-color">
+                    <p class="text-sm text-gray-400 mb-4">Reach 80+ points to deploy</p>
+                    <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                        <div class="bg-gold h-3 rounded-full" style="width: 45%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-20 px-6 lg:px-8 bg-gradient-to-b from-dark-bg to-card-bg">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">Simple, <span class="text-gold">honest pricing</span></h2>
+                <p class="text-xl text-gray-300">Start free, scale as you ship</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                <!-- Dig (Free) -->
+                <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
+                    <h3 class="text-xl font-semibold mb-2">Dig</h3>
+                    <div class="text-3xl font-bold mb-4">Free</div>
+                    <ul class="space-y-3 text-sm text-gray-300 mb-6">
+                        <li>• 1 project</li>
+                        <li>• Ship Score™ analysis</li>
+                        <li>• Basic deployment</li>
+                        <li>• Community support</li>
+                    </ul>
+                    <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
+                        Start Free
+                    </button>
+                </div>
+                
+                <!-- Strike -->
+                <div class="bg-card-bg border border-gold/50 rounded-xl p-6 hover-lift relative">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gold text-black px-3 py-1 rounded-full text-xs font-medium">
+                        Most Popular
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gold">Strike</h3>
+                    <div class="text-3xl font-bold mb-4">$12<span class="text-lg text-gray-400">/mo</span></div>
+                    <ul class="space-y-3 text-sm text-gray-300 mb-6">
+                        <li>• 5 projects</li>
+                        <li>• One-click fixes</li>
+                        <li>• Auth & payments setup</li>
+                        <li>• Custom domains</li>
+                        <li>• Priority support</li>
+                    </ul>
+                    <button class="w-full py-2 gradient-gold text-black rounded-lg font-medium hover-lift">
+                        Choose Strike
+                    </button>
+                </div>
+                
+                <!-- Gold -->
+                <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
+                    <h3 class="text-xl font-semibold mb-2">Gold</h3>
+                    <div class="text-3xl font-bold mb-4">$29<span class="text-lg text-gray-400">/mo</span></div>
+                    <ul class="space-y-3 text-sm text-gray-300 mb-6">
+                        <li>• Unlimited projects</li>
+                        <li>• Advanced integrations</li>
+                        <li>• Team collaboration</li>
+                        <li>• Analytics dashboard</li>
+                        <li>• Dedicated support</li>
+                    </ul>
+                    <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
+                        Choose Gold
+                    </button>
+                </div>
+                
+                <!-- Mine -->
+                <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
+                    <h3 class="text-xl font-semibold mb-2">Mine</h3>
+                    <div class="text-3xl font-bold mb-4">$79<span class="text-lg text-gray-400">/mo</span></div>
+                    <ul class="space-y-3 text-sm text-gray-300 mb-6">
+                        <li>• Everything in Gold</li>
+                        <li>• White-label deployments</li>
+                        <li>• Custom integrations</li>
+                        <li>• SLA guarantees</li>
+                        <li>• Enterprise support</li>
+                    </ul>
+                    <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Tools Section -->
+    <section class="py-20 px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-8">What AI tools work with Shovel?</h2>
+            <p class="text-2xl text-gold mb-12">If AI built it, Shovel ships it.</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-8 items-center">
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg font-bold">C</span>
+                    </div>
+                    <span class="text-sm text-gray-400">Cursor</span>
+                </div>
+                
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg">💖</span>
+                    </div>
+                    <span class="text-sm text-gray-400">Lovable</span>
+                </div>
+                
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg">⚡</span>
+                    </div>
+                    <span class="text-sm text-gray-400">Bolt.new</span>
+                </div>
+                
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg font-bold">R</span>
+                    </div>
+                    <span class="text-sm text-gray-400">Replit</span>
+                </div>
+                
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg">🤖</span>
+                    </div>
+                    <span class="text-sm text-gray-400">Claude</span>
+                </div>
+                
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg font-bold">v0</span>
+                    </div>
+                    <span class="text-sm text-gray-400">v0</span>
+                </div>
+                
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="w-12 h-12 bg-card-bg border border-border-color rounded-lg flex items-center justify-center">
+                        <span class="text-lg">💬</span>
+                    </div>
+                    <span class="text-sm text-gray-400">ChatGPT</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 px-6 lg:px-8 bg-card-bg border-t border-border-color">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h3 class="text-2xl font-semibold mb-6">Ready to ship what you built?</h3>
+                <div class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto mb-8">
+                    <input 
+                        type="email" 
+                        id="footer-email" 
+                        placeholder="Enter your email"
+                        class="flex-1 px-4 py-3 bg-dark-bg border border-border-color rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold"
+                    >
+                    <button 
+                        onclick="joinWaitlistFooter()"
+                        class="gradient-gold text-black px-8 py-3 rounded-lg font-semibold hover-lift hover:shadow-lg transition-all"
+                    >
+                        Dig In
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-border-color">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <span class="text-2xl mr-2">🪓</span>
+                    <span class="text-xl font-semibold">Shovel</span>
+                </div>
+                
+                <div class="text-sm text-gray-400">
+                    Built by <a href="#" class="text-gold hover:underline">NoGrave</a> • 
+                    <a href="#" class="hover:text-white">Privacy</a> • 
+                    <a href="#" class="hover:text-white">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function joinWaitlist() {
+            const email = document.getElementById('waitlist-email').value;
+            if (email && validateEmail(email)) {
+                // Save to localStorage for now
+                let waitlist = JSON.parse(localStorage.getItem('shovel-waitlist') || '[]');
+                if (!waitlist.includes(email)) {
+                    waitlist.push(email);
+                    localStorage.setItem('shovel-waitlist', JSON.stringify(waitlist));
+                    alert('🎉 Welcome to the waitlist! We\'ll notify you when Shovel is ready to ship.');
+                    document.getElementById('waitlist-email').value = '';
+                } else {
+                    alert('You\'re already on the waitlist!');
+                }
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        }
+
+        function joinWaitlistFooter() {
+            const email = document.getElementById('footer-email').value;
+            if (email && validateEmail(email)) {
+                let waitlist = JSON.parse(localStorage.getItem('shovel-waitlist') || '[]');
+                if (!waitlist.includes(email)) {
+                    waitlist.push(email);
+                    localStorage.setItem('shovel-waitlist', JSON.stringify(waitlist));
+                    alert('🎉 Welcome to the waitlist! We\'ll notify you when Shovel is ready to ship.');
+                    document.getElementById('footer-email').value = '';
+                } else {
+                    alert('You\'re already on the waitlist!');
+                }
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Simple fade-in animation on scroll
+        function observeElements() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', observeElements);
+    </script>
+</body>
+</html>

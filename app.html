@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shovel Dashboard - Ship What AI Builds</title>
+    <meta name="description" content="Shovel Dashboard - Manage and deploy your AI-built projects">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪓</text></svg>">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0a0a0a',
+                        'card-bg': '#141414',
+                        'border-color': '#222',
+                        'gold': '#D4A017',
+                        'gold-light': '#F5A623'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .gradient-gold {
+            background: linear-gradient(135deg, #F5A623 0%, #D4A017 100%);
+        }
+        .hover-lift {
+            transition: transform 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-1px);
+        }
+        .sidebar-transition {
+            transition: width 0.3s ease;
+        }
+        .loading-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .ship-score-bar {
+            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #16a34a 100%);
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-white font-inter h-screen overflow-hidden">
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <div class="w-64 bg-card-bg border-r border-border-color flex flex-col sidebar-transition">
+            <!-- Logo -->
+            <div class="p-6 border-b border-border-color">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">🪓</span>
+                    <span class="text-xl font-semibold">Shovel</span>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 p-6">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center p-3 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                            <span class="mr-3">📁</span>
+                            Projects
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors">
+                            <span class="mr-3">⚙️</span>
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors">
+                            <span class="mr-3">👤</span>
+                            Account
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- User Profile -->
+            <div class="p-6 border-t border-border-color">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center">
+                        <span class="text-sm">JD</span>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium">John Doe</div>
+                        <div class="text-xs text-gray-400">Strike Plan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-card-bg border-b border-border-color p-6">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-semibold">Projects</h1>
+                    <div class="flex items-center space-x-4">
+                        <button class="gradient-gold text-black px-4 py-2 rounded-lg font-medium hover-lift">
+                            + New Project
+                        </button>
+                        <button class="p-2 hover:bg-gray-800 rounded-lg transition-colors">
+                            <span class="text-xl">🔔</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-auto p-6">
+                <!-- Projects Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Active Project Card -->
+                    <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-1">my-saas-app</h3>
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <div class="w-2 h-2 bg-orange-400 rounded-full mr-2 loading-pulse"></div>
+                                    Scanning...
+                                </div>
+                            </div>
+                            <button class="p-1 hover:bg-gray-700 rounded">
+                                <span class="text-gray-400">⋯</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Ship Score -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Ship Score</span>
+                                <span class="text-2xl font-bold text-orange-400">67<span class="text-sm text-gray-400">/100</span></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="ship-score-bar h-3 rounded-full" style="width: 67%; background: linear-gradient(90deg, #dc2626 0%, #f59e0b 67%, #16a34a 100%); clip-path: inset(0 33% 0 0);"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Issues Summary -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium mb-3">Issues Found</h4>
+                            <div class="flex space-x-4 text-sm">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                    <span>1 Critical</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                                    <span>3 Warnings</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="space-y-2">
+                            <button 
+                                disabled 
+                                class="w-full py-2 bg-gray-600 text-gray-400 rounded-lg font-medium cursor-not-allowed"
+                            >
+                                🚀 Ship Now (80+ score required)
+                            </button>
+                            <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Completed Project Card -->
+                    <div class="bg-card-bg border border-border-color rounded-xl p-6 hover-lift">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-1">portfolio-site</h3>
+                                <div class="flex items-center text-sm text-green-400">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                    Deployed
+                                </div>
+                            </div>
+                            <button class="p-1 hover:bg-gray-700 rounded">
+                                <span class="text-gray-400">⋯</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Ship Score -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Ship Score</span>
+                                <span class="text-2xl font-bold text-green-400">95<span class="text-sm text-gray-400">/100</span></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="bg-green-400 h-3 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Deployment Info -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium mb-3">Live Site</h4>
+                            <a href="#" class="text-sm text-gold hover:underline">portfolio-site.shovelapp.com ↗</a>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="space-y-2">
+                            <button class="w-full py-2 gradient-gold text-black rounded-lg font-medium hover-lift">
+                                🔄 Redeploy
+                            </button>
+                            <button class="w-full py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
+                                View Analytics
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- New Project Card -->
+                    <div class="bg-card-bg border-2 border-dashed border-border-color rounded-xl p-6 hover:border-gold/50 transition-colors cursor-pointer">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gold/10 border border-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-3xl">➕</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">New Project</h3>
+                            <p class="text-gray-400 text-sm mb-6">Connect your repository or upload your AI-built project</p>
+                            <button class="gradient-gold text-black px-6 py-2 rounded-lg font-medium hover-lift">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Project Details Modal (Hidden by default) -->
+    <div id="project-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-card-bg border border-border-color rounded-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-auto">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-border-color">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-semibold">my-saas-app</h2>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-white">
+                        <span class="text-2xl">×</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Issues to Fix</h3>
+                        <div class="space-y-4">
+                            <!-- Critical Issue -->
+                            <div class="p-4 bg-red-900/20 border border-red-500/20 rounded-lg">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center mb-2">
+                                            <span class="text-red-400 mr-2">🚨</span>
+                                            <span class="font-medium">No database configured</span>
+                                        </div>
+                                        <p class="text-sm text-gray-300 mb-3">Your app needs a database to store user data and content. We can set up PostgreSQL or MongoDB for you.</p>
+                                        <button class="gradient-gold text-black px-4 py-2 rounded text-sm font-medium hover-lift">
+                                            Fix with Supabase (+35 pts)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Warning Issues -->
+                            <div class="p-4 bg-yellow-900/20 border border-yellow-500/20 rounded-lg">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center mb-2">
+                                            <span class="text-yellow-400 mr-2">⚠️</span>
+                                            <span class="font-medium">No authentication system</span>
+                                        </div>
+                                        <p class="text-sm text-gray-300 mb-3">Add user login/signup with OAuth providers like Google and GitHub.</p>
+                                        <button class="gradient-gold text-black px-4 py-2 rounded text-sm font-medium hover-lift">
+                                            Fix with Auth0 (+20 pts)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-yellow-900/20 border border-yellow-500/20 rounded-lg">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center mb-2">
+                                            <span class="text-yellow-400 mr-2">⚠️</span>
+                                            <span class="font-medium">No payment processing</span>
+                                        </div>
+                                        <p class="text-sm text-gray-300 mb-3">Accept payments from customers with Stripe integration.</p>
+                                        <button class="gradient-gold text-black px-4 py-2 rounded text-sm font-medium hover-lift">
+                                            Fix with Stripe (+15 pts)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-yellow-900/20 border border-yellow-500/20 rounded-lg">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center mb-2">
+                                            <span class="text-yellow-400 mr-2">⚠️</span>
+                                            <span class="font-medium">Missing environment variables</span>
+                                        </div>
+                                        <p class="text-sm text-gray-300 mb-3">Some environment variables are missing for production deployment.</p>
+                                        <button class="gradient-gold text-black px-4 py-2 rounded text-sm font-medium hover-lift">
+                                            Configure ENV (+5 pts)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Project Analysis</h3>
+                        
+                        <!-- Detected Technologies -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-3">✅ Detected Technologies</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center">
+                                    <span class="text-green-400 mr-2">✅</span>
+                                    <span>React 18.3.1 frontend</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-400 mr-2">✅</span>
+                                    <span>Vite build system</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-400 mr-2">✅</span>
+                                    <span>TypeScript configuration</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-400 mr-2">✅</span>
+                                    <span>Responsive design (Tailwind CSS)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ship Score Breakdown -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-3">Ship Score Breakdown</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-sm">
+                                    <span>Frontend & Build System</span>
+                                    <span class="text-green-400">+25</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Code Quality & TypeScript</span>
+                                    <span class="text-green-400">+20</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Responsive Design</span>
+                                    <span class="text-green-400">+15</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Basic Configuration</span>
+                                    <span class="text-green-400">+7</span>
+                                </div>
+                                <div class="border-t border-border-color pt-2 flex justify-between font-medium">
+                                    <span>Current Score</span>
+                                    <span class="text-orange-400">67/100</span>
+                                </div>
+                                <div class="flex justify-between text-sm text-gray-400">
+                                    <span>Potential Score (all fixes)</span>
+                                    <span>142/100 (capped at 100)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estimated Timeline -->
+                        <div>
+                            <h4 class="font-medium mb-3">⏱️ Estimated Fix Time</h4>
+                            <div class="bg-gold/10 border border-gold/20 rounded-lg p-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gold mb-1">< 5 minutes</div>
+                                    <div class="text-sm text-gray-300">All fixes can be automated</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-border-color">
+                <div class="flex space-x-3">
+                    <button class="flex-1 gradient-gold text-black py-2 rounded-lg font-medium hover-lift">
+                        Fix All Issues (+75 pts)
+                    </button>
+                    <button onclick="closeModal()" class="px-6 py-2 border border-border-color rounded-lg hover:border-gold transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Modal functionality
+        function showModal() {
+            document.getElementById('project-modal').classList.remove('hidden');
+            document.getElementById('project-modal').classList.add('flex');
+        }
+        
+        function closeModal() {
+            document.getElementById('project-modal').classList.add('hidden');
+            document.getElementById('project-modal').classList.remove('flex');
+        }
+        
+        // Add click handler to "View Details" button
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewDetailsBtn = document.querySelector('button:contains("View Details")');
+            if (viewDetailsBtn) {
+                viewDetailsBtn.onclick = showModal;
+            }
+        });
+    </script>
+</body>
+</html>
