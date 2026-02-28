@@ -7,6 +7,8 @@ const crypto = require('crypto');
 const os = require('os');
 
 const ProjectScanner = require('./scanner');
+const ProjectFixer = require('./fixer');
+const archiver = require('archiver');
 const { addToWaitlist, getWaitlistCount, saveScanResult, getScanResult, getRecentScans } = require('./db');
 
 const app = express();
@@ -14,6 +16,9 @@ const PORT = process.env.PORT || 3847;
 
 // Rate limiting (simple in-memory)
 const rateLimiter = new Map();
+
+// Store fixed projects (in production, use Redis or database)
+const fixedProjects = new Map();
 
 // Middleware
 app.use(cors());
@@ -260,6 +265,188 @@ app.post('/api/scan', rateLimit, async (req, res) => {
         if (tempDir) {
             cleanupTempDir(tempDir);
         }
+    }
+});
+
+// Apply fixes to scanned project
+app.post('/api/fix', rateLimit, async (req, res) => {
+    const fixStartTime = Date.now();
+    let tempDir = null;
+    let fixedProjectPath = null;
+
+    try {
+        const { scanId, fixes } = req.body;
+
+        // Validate input
+        if (!scanId) {
+            return res.status(400).json({ error: 'Scan ID is required' });
+        }
+
+        if (!fixes || !Array.isArray(fixes) || fixes.length === 0) {
+            return res.status(400).json({ error: 'Fixes array is required' });
+        }
+
+        // Get scan result
+        const scanResult = getScanResult(scanId);
+        if (!scanResult) {
+            return res.status(404).json({ error: 'Scan result not found' });
+        }
+
+        const originalScore = scanResult.ship_score;
+        
+        console.log(`Starting fix ${scanId} for ${scanResult.repo_url} with fixes: ${fixes.join(', ')}`);
+
+        // Create temp directory for fixing
+        const fixId = crypto.randomBytes(8).toString('hex');
+        tempDir = path.join(os.tmpdir(), `shovel-fix-${fixId}`);
+        fixedProjectPath = path.join(os.tmpdir(), `shovel-fixed-${scanId}`);
+        
+        // Clone repository fresh
+        cloneRepository(scanResult.repo_url, tempDir);
+
+        // Parse scan result data
+        const scanData = {
+            shipScore: originalScore,
+            stackDetection: scanResult.stack_detection,
+            categories: scanResult.categories
+        };
+
+        // Apply fixes
+        const fixer = new ProjectFixer(tempDir, scanData);
+        const fixResult = await fixer.applyFixes(fixes);
+
+        if (fixResult.errors.length > 0) {
+            console.warn('Fix errors:', fixResult.errors);
+        }
+
+        // Create git diff
+        let diff = '';
+        try {
+            execSync('git init', { cwd: tempDir, stdio: 'pipe' });
+            execSync('git add .', { cwd: tempDir, stdio: 'pipe' });
+            execSync('git commit -m "Initial commit"', { cwd: tempDir, stdio: 'pipe' });
+            
+            // Show diff of all changes
+            diff = execSync('git diff HEAD~1 HEAD', { cwd: tempDir, encoding: 'utf8' });
+        } catch (gitError) {
+            console.warn('Git diff creation failed:', gitError.message);
+            diff = 'Diff unavailable';
+        }
+
+        // Copy fixed project to permanent location
+        execSync(`cp -r "${tempDir}" "${fixedProjectPath}"`, { stdio: 'pipe' });
+
+        // Re-run scanner on fixed project for new score
+        const scanner = new ProjectScanner(fixedProjectPath);
+        const newScanResult = await scanner.scan();
+        const newScore = newScanResult.shipScore;
+
+        // Store fixed project info
+        fixedProjects.set(scanId, {
+            path: fixedProjectPath,
+            originalScore,
+            newScore,
+            fixes: fixes,
+            diff: diff,
+            filesModified: fixResult.modified,
+            filesCreated: fixResult.created,
+            timestamp: Date.now()
+        });
+
+        const fixDuration = Date.now() - fixStartTime;
+
+        console.log(`Fix ${scanId} completed in ${fixDuration}ms. Score: ${originalScore} → ${newScore}`);
+
+        res.json({
+            success: true,
+            scanId,
+            originalScore,
+            newScore,
+            filesModified: fixResult.modified,
+            filesCreated: fixResult.created,
+            diff: diff.length > 5000 ? diff.substring(0, 5000) + '\n... (truncated)' : diff,
+            fixedProjectPath: fixedProjectPath,
+            fixDuration,
+            errors: fixResult.errors
+        });
+
+    } catch (error) {
+        console.error('Fix error:', error);
+        
+        let statusCode = 500;
+        let errorMessage = 'Internal server error during fix';
+
+        if (error.message.includes('Failed to clone')) {
+            statusCode = 400;
+            errorMessage = 'Could not access repository for fixing.';
+        }
+
+        res.status(statusCode).json({ error: errorMessage });
+        
+    } finally {
+        // Cleanup temp directory (keep fixed project)
+        if (tempDir && tempDir !== fixedProjectPath) {
+            cleanupTempDir(tempDir);
+        }
+    }
+});
+
+// Download fixed project as zip
+app.get('/api/fix/:scanId/download', (req, res) => {
+    try {
+        const { scanId } = req.params;
+        const fixedProject = fixedProjects.get(scanId);
+
+        if (!fixedProject || !fs.existsSync(fixedProject.path)) {
+            return res.status(404).json({ error: 'Fixed project not found or expired' });
+        }
+
+        const projectName = path.basename(fixedProject.path);
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${projectName}-fixed.zip"`);
+
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        
+        archive.on('error', (err) => {
+            console.error('Archive error:', err);
+            res.status(500).end();
+        });
+
+        archive.pipe(res);
+        archive.directory(fixedProject.path, false);
+        archive.finalize();
+
+    } catch (error) {
+        console.error('Download error:', error);
+        res.status(500).json({ error: 'Failed to create download' });
+    }
+});
+
+// Get diff for fixed project
+app.get('/api/fix/:scanId/diff', (req, res) => {
+    try {
+        const { scanId } = req.params;
+        const fixedProject = fixedProjects.get(scanId);
+
+        if (!fixedProject) {
+            return res.status(404).json({ error: 'Fixed project not found' });
+        }
+
+        res.json({
+            success: true,
+            scanId,
+            originalScore: fixedProject.originalScore,
+            newScore: fixedProject.newScore,
+            fixes: fixedProject.fixes,
+            filesModified: fixedProject.filesModified,
+            filesCreated: fixedProject.filesCreated,
+            diff: fixedProject.diff,
+            timestamp: fixedProject.timestamp
+        });
+
+    } catch (error) {
+        console.error('Diff retrieval error:', error);
+        res.status(500).json({ error: 'Failed to retrieve diff' });
     }
 });
 

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/NoGraveDev/shovel#readme",
   "dependencies": {
+    "archiver": "^7.0.1",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
     "express": "^5.2.1"
